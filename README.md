@@ -67,5 +67,5 @@ Envía una petición con el texto del documento y la pregunta que deseas resolve
 
 ---
 
-## 🛡️ Privacidad
+## Privacidad
 Este proyecto procesa toda la información de manera local utilizando Ollama, garantizando que ningún dato de tus documentos salga hacia servidores de terceros.
