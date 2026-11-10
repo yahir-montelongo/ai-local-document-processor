@@ -10,3 +10,5 @@ services:
       - OLLAMA_URL=http://host.docker.internal:11434/api/generate
       - OLLAMA_MODEL=llama3.2
       - OLLAMA_TIMEOUT=120
+      - OLLAMA_NUM_CTX=4096
+      - MAX_DOCUMENT_CHARS=50000

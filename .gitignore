@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Entornos virtuales y secretos
+.venv/
+venv/
+.env
+
+# Editores y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
