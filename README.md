@@ -1,5 +1,12 @@
 # AI Local Document Processor
 
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Ollama](https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
+
 API desarrollada con **FastAPI**, **Docker** y modelos de lenguaje locales ejecutados mediante **Ollama** (`llama3.2`), diseñada para procesar y responder consultas sobre documentos de forma completamente local y privada.
 
 ## Stack Tecnológico
@@ -29,16 +36,19 @@ cd ai-local-document-processor
 
 ### 2. Descargar el modelo en Ollama
 Abre tu terminal y descarga el modelo base necesario:
-\`\`\`bash
+
+```bash
 ollama run llama3.2
-\`\`\`
+```
+
 *(Una vez descargado, puedes salir escribiendo `/bye`).*
 
 ### 3. Levantar los servicios con Docker
 Ejecuta el siguiente comando para compilar y arrancar el contenedor de FastAPI configurado para comunicarse con tu host local:
-\`\`\`bash
+
+```bash
 docker compose up --build
-\`\`\`
+```
 
 ---
 
@@ -68,6 +78,25 @@ Envía una petición con el texto del documento y la pregunta que deseas resolve
 
 ---
 
+## Pruebas Automatizadas
+
+El proyecto cuenta con una suite de pruebas (pytest) que cubren validaciones de entrada, construcción del prompt y manejo de errores de Ollama (502, 503, 504).
+
+Para ejecutarlas localmente (sin necesidad de tener Ollama corriendo, ya que se usa `monkeypatch`):
+
+```bash
+pip install -r requirements-dev.txt
+pytest -v
+```
+
+---
+
 ## Privacidad
 
 Este proyecto procesa toda la información de forma local con Ollama. Los documentos y las preguntas nunca se envían a servicios externos.
+
+---
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
