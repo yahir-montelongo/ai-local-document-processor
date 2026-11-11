@@ -1,5 +1,6 @@
 import logging
 import os
+import secrets
 
 import requests
 from fastapi import FastAPI, HTTPException, Security, status
@@ -14,22 +15,27 @@ OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "120"))
 OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "4096"))
 MAX_DOCUMENT_CHARS = int(os.getenv("MAX_DOCUMENT_CHARS", "50000"))
 
-# --- CONFIGURACIÓN DE SEGURIDAD ---
-# Si no se define en el entorno, por defecto usará "secreto123" (útil para pruebas)
-API_KEY = os.getenv("API_KEY", "secreto123")
+API_KEY = os.getenv("API_KEY", "").strip()
+if not API_KEY:
+    raise RuntimeError(
+        "Falta la variable de entorno API_KEY. "
+        "Copia .env.example a .env y define una clave."
+    )
+
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
-def verify_api_key(api_key: str = Security(api_key_header)):
-    if api_key != API_KEY:
-        logger.warning("Intento de acceso no autorizado: API Key inválida o ausente.")
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="API Key inválida o ausente."
-        )
-    return api_key
-# ----------------------------------
 
-app = FastAPI(title="AI Document Processor", version="1.2")
+def verify_api_key(api_key: str | None = Security(api_key_header)):
+    if not api_key:
+        logger.warning("Petición sin API Key.")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Falta la cabecera X-API-Key.")
+    # Comparación en tiempo constante (evita ataques por temporización)
+    if not secrets.compare_digest(api_key.encode(), API_KEY.encode()):
+        logger.warning("Intento de acceso con API Key inválida.")
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "API Key inválida.")
+    return api_key
+
+app = FastAPI(title="AI Document Processor", version="1.3")
 
 
 class QueryRequest(BaseModel):

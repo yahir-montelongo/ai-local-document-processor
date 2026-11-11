@@ -4,10 +4,7 @@ import pytest
 import requests
 from fastapi.testclient import TestClient
 
-from app.main import MAX_DOCUMENT_CHARS, app
-
-from app.main import MAX_DOCUMENT_CHARS, app, API_KEY
-from fastapi.testclient import TestClient
+from app.main import API_KEY, MAX_DOCUMENT_CHARS, app
 
 client = TestClient(app, headers={"X-API-Key": API_KEY})
 
@@ -114,8 +111,15 @@ def test_validacion_de_entrada(payload):
     r = client.post(URL, json=payload)
     assert r.status_code == 422
 
-def test_acceso_denegado_sin_api_key():
-    client_sin_llave = TestClient(app)
-    r = client_sin_llave.post(URL, json=PAYLOAD)
+def test_sin_api_key_devuelve_401():
+    r = TestClient(app).post(URL, json=PAYLOAD)
+    assert r.status_code == 401
+
+
+def test_api_key_incorrecta_devuelve_403():
+    r = TestClient(app, headers={"X-API-Key": "otra-clave"}).post(URL, json=PAYLOAD)
     assert r.status_code == 403
-    assert "API Key inválida" in r.json()["detail"]
+
+
+def test_health_no_requiere_api_key():
+    assert TestClient(app).get("/health").status_code == 200

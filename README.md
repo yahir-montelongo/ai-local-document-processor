@@ -13,6 +13,8 @@ API desarrollada con **FastAPI**, **Docker** y modelos de lenguaje locales ejecu
 * **Backend:** Python, FastAPI, Pydantic, Requests
 * **IA Local:** Ollama (Llama 3.2 3B)
 * **Contenedorización:** Docker & Docker Compose
+* **Seguridad:** API Key (Header `X-API-Key`), comparación en tiempo constante
+* **Pruebas:** Pytest (17 pruebas unitarias)
 
 ---
 
@@ -35,12 +37,12 @@ cd ai-local-document-processor
 ```
 
 ### 2. Configurar variables de entorno
-Crea un archivo `.env` en la raíz del proyecto (basado en el archivo `.env.example`) y define tu clave secreta para la API:
+El proyecto requiere una clave de API para proteger el endpoint de consultas. Crea un archivo `.env` en la raíz del proyecto (basado en el archivo `.env.example`) y define tu clave secreta:
 
 ```env
-API_KEY=tu_clave_secreta_aqui
+API_KEY=sk_live_tu_clave_secreta_aqui
 ```
-*(Nota: El archivo `.env` está en el `.gitignore` para proteger tus credenciales).*
+*(Nota: El archivo `.env` está en el `.gitignore` para proteger tus credenciales. La aplicación no arrancará si esta variable no está definida).*
 
 ### 3. Descargar el modelo en Ollama
 Abre tu terminal y descarga el modelo base necesario:
@@ -67,9 +69,9 @@ Una vez que el servidor esté activo, puedes acceder a la documentación interac
 
 ### Endpoint principal: `POST /api/v1/query`
 
-> **Seguridad:** Este endpoint requiere autenticación. Debes enviar la cabecera `X-API-Key` con el valor definido en tu archivo `.env`.
+> ⚠️ **Seguridad:** Este endpoint requiere autenticación. Debes enviar la cabecera `X-API-Key` con el valor definido en tu archivo `.env`.
 
-**Ejemplo de petición:**
+**Ejemplo de petición (JSON):**
 
 ```json
 {
@@ -83,33 +85,47 @@ Una vez que el servidor esté activo, puedes acceder a la documentación interac
 ```json
 {
   "status": "success",
-  "answer": "El horario de atención es de lunes a viernes de 9:00 a 18:00 horas."
+  "answer": "El horario de atención de la empresa TecnoSoluciones es de lunes a viernes de 9:00 a 18:00 horas."
 }
 ```
 
 #### Ejemplo usando `curl`:
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/query \
+curl -X POST "http://localhost:8000/api/v1/query" \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: tu_clave_secreta_aqui" \
+  -H "X-API-Key: tu_clave_secreta" \
   -d '{
-    "document_text": "FastAPI es un framework de Python.",
-    "question": "¿Qué es FastAPI?"
+    "document_text": "La empresa TecnoSoluciones fue fundada en 2015 en Guadalajara. Su horario es de lunes a viernes de 9:00 a 18:00 horas.",
+    "question": "¿Cuál es el horario de atención?"
   }'
 ```
+*(Nota para usuarios de Windows CMD: pueden requerir escapar las comillas dobles internas con `\"` o usar PowerShell).*
+
+---
+
+## Códigos de Error
+
+| Código | Causa probable |
+| :--- | :--- |
+| 401 | Falta la cabecera `X-API-Key` en la petición. |
+| 403 | La `X-API-Key` enviada es incorrecta. |
+| 422 | Campos vacíos, faltantes o exceden el límite en la petición. |
+| 502 | Ollama respondió con un error. |
+| 503 | No se pudo conectar con Ollama (verifica que esté abierto). |
+| 504 | Ollama tardó más del tiempo límite en responder. |
 
 ---
 
 ## Pruebas Automatizadas
 
-El proyecto cuenta con una suite de pruebas (pytest) que cubren validaciones de entrada, construcción del prompt, manejo de errores de Ollama (502, 503, 504) y la seguridad de la API (403).
+El proyecto cuenta con una suite de pruebas (pytest) que cubren validaciones de entrada, construcción del prompt, manejo de errores de Ollama (502, 503, 504) y seguridad de la API (401, 403).
 
 Para ejecutarlas localmente (sin necesidad de tener Ollama corriendo, ya que se usa `monkeypatch`):
 
 ```bash
 pip install -r requirements-dev.txt
-pytest -v
+python -m pytest -v
 ```
 
 ---

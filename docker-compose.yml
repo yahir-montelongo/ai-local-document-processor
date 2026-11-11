@@ -12,4 +12,4 @@ services:
       - OLLAMA_TIMEOUT=120
       - OLLAMA_NUM_CTX=4096
       - MAX_DOCUMENT_CHARS=50000
-      - API_KEY=${API_KEY}
+      - API_KEY=${API_KEY:?Define API_KEY en el archivo .env (copia .env.example)}
