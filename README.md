@@ -64,7 +64,7 @@ Envía una petición con el texto del documento y la pregunta que deseas resolve
   "status": "success",
   "answer": "Según el documento, los sistemas se conectan mediante APIs REST y FastAPI."
 }
-\`\`\`
+```
 
 ---
 
