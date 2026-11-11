@@ -69,7 +69,7 @@ Una vez que el servidor esté activo, puedes acceder a la documentación interac
 
 ### Endpoint principal: `POST /api/v1/query`
 
-> ⚠️ **Seguridad:** Este endpoint requiere autenticación. Debes enviar la cabecera `X-API-Key` con el valor definido en tu archivo `.env`.
+> **Seguridad:** Este endpoint requiere autenticación. Debes enviar la cabecera `X-API-Key` con el valor definido en tu archivo `.env`.
 
 **Ejemplo de petición (JSON):**
 
