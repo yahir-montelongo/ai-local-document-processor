@@ -4,7 +4,7 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Ollama](https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white)
-  [![CI](https://github.com/yahir-montelongo/ai-local-document-processor/actions/workflows/ci.yml/badge.svg)](https://github.com/yahir-montelongo/ai-local-document-processor/actions/workflows/ci.yml)
+[![CI](https://github.com/yahir-montelongo/ai-local-document-processor/actions/workflows/ci.yml/badge.svg)](https://github.com/yahir-montelongo/ai-local-document-processor/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
 API desarrollada con **FastAPI**, **Docker** y modelos de lenguaje locales ejecutados mediante **Ollama** (`llama3.2`), diseñada para procesar y responder consultas sobre documentos de forma completamente local y privada.
@@ -14,7 +14,7 @@ API desarrollada con **FastAPI**, **Docker** y modelos de lenguaje locales ejecu
 * **IA Local:** Ollama (Llama 3.2 3B)
 * **Contenedorización:** Docker & Docker Compose
 * **Seguridad:** API Key (Header `X-API-Key`), comparación en tiempo constante
-* **Pruebas:** Pytest (17 pruebas unitarias)
+* **Pruebas:** Pytest (17 pruebas unitarias) y GitHub Actions (CI)
 
 ---
 
@@ -69,6 +69,8 @@ Una vez que el servidor esté activo, puedes acceder a la documentación interac
 **[http://localhost:8000/docs](http://localhost:8000/docs)**
 
 ### Endpoint principal: `POST /api/v1/query`
+
+![Demostración de la API](docs/demo.png)
 
 > **Seguridad:** Este endpoint requiere autenticación. Debes enviar la cabecera `X-API-Key` con el valor definido en tu archivo `.env`.
 
