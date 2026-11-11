@@ -4,7 +4,7 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Ollama](https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)
+  [![CI](https://github.com/yahir-montelongo/ai-local-document-processor/actions/workflows/ci.yml/badge.svg)](https://github.com/yahir-montelongo/ai-local-document-processor/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
 API desarrollada con **FastAPI**, **Docker** y modelos de lenguaje locales ejecutados mediante **Ollama** (`llama3.2`), diseñada para procesar y responder consultas sobre documentos de forma completamente local y privada.
