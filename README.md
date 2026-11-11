@@ -34,7 +34,15 @@ git clone https://github.com/yahir-montelongo/ai-local-document-processor.git
 cd ai-local-document-processor
 ```
 
-### 2. Descargar el modelo en Ollama
+### 2. Configurar variables de entorno
+Crea un archivo `.env` en la raíz del proyecto (basado en el archivo `.env.example`) y define tu clave secreta para la API:
+
+```env
+API_KEY=tu_clave_secreta_aqui
+```
+*(Nota: El archivo `.env` está en el `.gitignore` para proteger tus credenciales).*
+
+### 3. Descargar el modelo en Ollama
 Abre tu terminal y descarga el modelo base necesario:
 
 ```bash
@@ -43,7 +51,7 @@ ollama run llama3.2
 
 *(Una vez descargado, puedes salir escribiendo `/bye`).*
 
-### 3. Levantar los servicios con Docker
+### 4. Levantar los servicios con Docker
 Ejecuta el siguiente comando para compilar y arrancar el contenedor de FastAPI configurado para comunicarse con tu host local:
 
 ```bash
@@ -58,12 +66,15 @@ Una vez que el servidor esté activo, puedes acceder a la documentación interac
 **[http://localhost:8000/docs](http://localhost:8000/docs)**
 
 ### Endpoint principal: `POST /api/v1/query`
-Envía una petición con el texto del documento y la pregunta que deseas resolver:
+
+> ⚠️ **Seguridad:** Este endpoint requiere autenticación. Debes enviar la cabecera `X-API-Key` con el valor definido en tu archivo `.env`.
+
+**Ejemplo de petición:**
 
 ```json
 {
-  "document_text": "Los sistemas de gestión se conectan mediante APIs REST y FastAPI.",
-  "question": "¿Qué tecnologías se usan para conectar los sistemas?"
+  "document_text": "La empresa TecnoSoluciones fue fundada en 2015 en Guadalajara. Su horario de atención es de lunes a viernes de 9:00 a 18:00 horas.",
+  "question": "¿Cuál es el horario de atención de la empresa?"
 }
 ```
 
@@ -72,15 +83,27 @@ Envía una petición con el texto del documento y la pregunta que deseas resolve
 ```json
 {
   "status": "success",
-  "answer": "Según el documento, los sistemas se conectan mediante APIs REST y FastAPI."
+  "answer": "El horario de atención es de lunes a viernes de 9:00 a 18:00 horas."
 }
+```
+
+#### Ejemplo usando `curl`:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/query \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: tu_clave_secreta_aqui" \
+  -d '{
+    "document_text": "FastAPI es un framework de Python.",
+    "question": "¿Qué es FastAPI?"
+  }'
 ```
 
 ---
 
 ## Pruebas Automatizadas
 
-El proyecto cuenta con una suite de pruebas (pytest) que cubren validaciones de entrada, construcción del prompt y manejo de errores de Ollama (502, 503, 504).
+El proyecto cuenta con una suite de pruebas (pytest) que cubren validaciones de entrada, construcción del prompt, manejo de errores de Ollama (502, 503, 504) y la seguridad de la API (403).
 
 Para ejecutarlas localmente (sin necesidad de tener Ollama corriendo, ya que se usa `monkeypatch`):
 

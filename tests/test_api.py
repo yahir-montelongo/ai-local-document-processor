@@ -6,7 +6,10 @@ from fastapi.testclient import TestClient
 
 from app.main import MAX_DOCUMENT_CHARS, app
 
-client = TestClient(app)
+from app.main import MAX_DOCUMENT_CHARS, app, API_KEY
+from fastapi.testclient import TestClient
+
+client = TestClient(app, headers={"X-API-Key": API_KEY})
 
 URL = "/api/v1/query"
 PAYLOAD = {
@@ -110,3 +113,9 @@ def test_ollama_responde_json_invalido(monkeypatch):
 def test_validacion_de_entrada(payload):
     r = client.post(URL, json=payload)
     assert r.status_code == 422
+
+def test_acceso_denegado_sin_api_key():
+    client_sin_llave = TestClient(app)
+    r = client_sin_llave.post(URL, json=PAYLOAD)
+    assert r.status_code == 403
+    assert "API Key inválida" in r.json()["detail"]

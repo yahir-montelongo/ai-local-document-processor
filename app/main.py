@@ -2,7 +2,8 @@ import logging
 import os
 
 import requests
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Security, status
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger("document_processor")
@@ -13,7 +14,22 @@ OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "120"))
 OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "4096"))
 MAX_DOCUMENT_CHARS = int(os.getenv("MAX_DOCUMENT_CHARS", "50000"))
 
-app = FastAPI(title="AI Document Processor", version="1.1")
+# --- CONFIGURACIÓN DE SEGURIDAD ---
+# Si no se define en el entorno, por defecto usará "secreto123" (útil para pruebas)
+API_KEY = os.getenv("API_KEY", "secreto123")
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+def verify_api_key(api_key: str = Security(api_key_header)):
+    if api_key != API_KEY:
+        logger.warning("Intento de acceso no autorizado: API Key inválida o ausente.")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="API Key inválida o ausente."
+        )
+    return api_key
+# ----------------------------------
+
+app = FastAPI(title="AI Document Processor", version="1.2")
 
 
 class QueryRequest(BaseModel):
@@ -28,11 +44,10 @@ class QueryResponse(BaseModel):
 
 @app.get("/health")
 def health():
-    """Comprueba que la API está viva (no valida la conexión con Ollama)."""
     return {"status": "ok"}
 
 
-@app.post("/api/v1/query", response_model=QueryResponse)
+@app.post("/api/v1/query", response_model=QueryResponse, dependencies=[Security(verify_api_key)])
 def process_document_query(payload: QueryRequest):
     prompt = (
         "Responde únicamente con la información del documento. "
