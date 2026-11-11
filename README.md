@@ -22,6 +22,7 @@ API desarrollada con **FastAPI**, **Docker** y modelos de lenguaje locales ejecu
 Asegúrate de tener instalado en tu equipo:
 * [Docker y Docker Compose](https://www.docker.com/)
 * [Ollama](https://ollama.com/) corriendo en tu máquina local.
+* **Python 3.11 o superior** (Probado en Python 3.12 y 3.15)
 
 ---
 
@@ -42,7 +43,7 @@ El proyecto requiere una clave de API para proteger el endpoint de consultas. Cr
 ```env
 API_KEY=sk_live_tu_clave_secreta_aqui
 ```
-*(Nota: El archivo `.env` está en el `.gitignore` para proteger tus credenciales. La aplicación no arrancará si esta variable no está definida).*
+*Nota: El archivo `.env` está en el `.gitignore` para proteger tus credenciales. La aplicación no arrancará si esta variable no está definida.*
 
 ### 3. Descargar el modelo en Ollama
 Abre tu terminal y descarga el modelo base necesario:
@@ -89,18 +90,26 @@ Una vez que el servidor esté activo, puedes acceder a la documentación interac
 }
 ```
 
-#### Ejemplo usando `curl`:
+#### Ejemplo usando `curl` (Linux, macOS o Git Bash):
 
 ```bash
 curl -X POST "http://localhost:8000/api/v1/query" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: tu_clave_secreta" \
   -d '{
-    "document_text": "La empresa TecnoSoluciones fue fundada en 2015 en Guadalajara. Su horario es de lunes a viernes de 9:00 a 18:00 horas.",
-    "question": "¿Cuál es el horario de atención?"
+    "document_text": "FastAPI es un framework de Python.",
+    "question": "¿Qué es FastAPI?"
   }'
 ```
-*(Nota para usuarios de Windows CMD: pueden requerir escapar las comillas dobles internas con `\"` o usar PowerShell).*
+
+#### Ejemplo usando PowerShell (Windows):
+
+```powershell
+$headers = @{ "X-API-Key" = "TU_CLAVE" }
+$body = '{"document_text":"FastAPI es un framework de Python.","question":"¿Qué es FastAPI?"}'
+
+Invoke-RestMethod -Method Post -Uri http://localhost:8000/api/v1/query -Headers $headers -Body $body -ContentType "application/json"
+```
 
 ---
 
